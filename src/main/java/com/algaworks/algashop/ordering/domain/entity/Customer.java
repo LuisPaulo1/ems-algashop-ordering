@@ -1,7 +1,6 @@
 package com.algaworks.algashop.ordering.domain.entity;
 
 import com.algaworks.algashop.ordering.domain.validator.FieldValidations;
-import org.apache.commons.validator.routines.EmailValidator;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -59,7 +58,13 @@ public class Customer {
     }
 
     public void archive() {
-
+        this.setArchived(true);
+        this.setArchivedAt(OffsetDateTime.now());
+        this.setFullName("Anonymous");
+        this.setPhone("000-000-0000");
+        this.setDocument("000-00-0000");
+        this.setEmail(UUID.randomUUID() + "@anonymous.com");
+        this.setBirthDate(null);
     }
 
     public void enablePromotionNotifications() {
