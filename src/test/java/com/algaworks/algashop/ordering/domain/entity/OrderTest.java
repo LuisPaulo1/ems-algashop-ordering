@@ -26,7 +26,6 @@ class OrderTest {
         );
 
         Assertions.assertThat(order.items()).hasSize(1);
-
         OrderItem orderItem = order.items().iterator().next();
 
         Assertions.assertWith(orderItem,
