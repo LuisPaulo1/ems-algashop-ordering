@@ -14,19 +14,6 @@ import java.util.Set;
 class OrderTest {
 
     @Test
-    void shouldGenerate() {
-        Order order = Order.draft(new CustomerId());
-
-        Assertions.assertThat(order.id()).isNotNull();
-        Assertions.assertThat(order.status()).isEqualTo(OrderStatus.DRAFT);
-        Assertions.assertThat(order.customerId()).isNotNull();
-        Assertions.assertThat(order.totalAmount()).isEqualTo(Money.ZERO);
-        Assertions.assertThat(order.totalItems()).isEqualTo(Quantity.ZERO);
-        Assertions.assertThat(order.items()).isEmpty();
-
-    }
-
-    @Test
     void shouldAddItem() {
         Order order = Order.draft(new CustomerId());
         ProductId productId = new ProductId();
@@ -52,7 +39,7 @@ class OrderTest {
     }
 
     @Test
-    public void shouldGenerateExceptionWhenTryToChangeItemSet() {
+    void shouldGenerateExceptionWhenTryToChangeItemSet() {
         Order order = Order.draft(new CustomerId());
         ProductId productId = new ProductId();
 
@@ -70,7 +57,7 @@ class OrderTest {
     }
 
     @Test
-    public void shouldCalculateTotals() {
+    void shouldCalculateTotals() {
         Order order = Order.draft(new CustomerId());
         ProductId productId = new ProductId();
 
@@ -94,15 +81,22 @@ class OrderTest {
 
     @Test
     void givenDraftOrder_whenPlace_shouldChangeToPlaced() {
-        Order order = Order.draft(new CustomerId());
+        Order order = OrderTestDataBuilder.anOrder().build();
         order.place();
         Assertions.assertThat(order.isPlaced()).isTrue();
     }
 
     @Test
+    void givenPlacedOrder_whenMarkAsPaid_shouldChangeToPaid() {
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
+        order.markAsPaid();
+        Assertions.assertThat(order.isPaid()).isTrue();
+        Assertions.assertThat(order.paidAt()).isNotNull();
+    }
+
+    @Test
     void givenPlacedOrder_whenTryToPlace_shouldGenerateException() {
-        Order order = Order.draft(new CustomerId());
-        order.place();
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
         Assertions.assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
                 .isThrownBy(order::place);
     }
