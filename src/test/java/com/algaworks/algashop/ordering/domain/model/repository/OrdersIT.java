@@ -96,4 +96,26 @@ class OrdersIT {
 
     }
 
+    @Test
+    void souldCountExistingOrders() {
+        Assertions.assertThat(orders.count()).isZero();
+
+        Order order1 = OrderTestDataBuilder.anOrder().build();
+        Order order2 = OrderTestDataBuilder.anOrder().build();
+
+        orders.add(order1);
+        orders.add(order2);
+
+        Assertions.assertThat(orders.count()).isEqualTo(2);
+    }
+
+    @Test
+    void shouldReturnIfOrderExists() {
+        Order order = OrderTestDataBuilder.anOrder().build();
+        orders.add(order);
+
+        assertThat(orders.exists(order.id())).isTrue();
+        assertThat(orders.exists(new OrderId())).isFalse();
+    }
+
 }
