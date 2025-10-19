@@ -18,7 +18,7 @@ class OrderPersistenceEntityRepositoryIT {
     private final OrderPersistenceEntityRepository orderPersistenceEntityRepository;
 
     @Autowired
-    public OrderPersistenceEntityRepositoryIT(OrderPersistenceEntityRepository orderPersistenceEntityRepository) {
+    OrderPersistenceEntityRepositoryIT(OrderPersistenceEntityRepository orderPersistenceEntityRepository) {
         this.orderPersistenceEntityRepository = orderPersistenceEntityRepository;
     }
 
@@ -28,6 +28,10 @@ class OrderPersistenceEntityRepositoryIT {
 
         orderPersistenceEntityRepository.saveAndFlush(entity);
         Assertions.assertThat(orderPersistenceEntityRepository.existsById(entity.getId())).isTrue();
+
+        OrderPersistenceEntity savedEntity = orderPersistenceEntityRepository.findById(entity.getId()).orElseThrow();
+
+        Assertions.assertThat(savedEntity.getItems()).isNotEmpty();
     }
 
     @Test
@@ -42,6 +46,7 @@ class OrderPersistenceEntityRepositoryIT {
         entity = orderPersistenceEntityRepository.saveAndFlush(entity);
 
         Assertions.assertThat(entity.getCreatedByUserId()).isNotNull();
+
         Assertions.assertThat(entity.getLastModifiedAt()).isNotNull();
         Assertions.assertThat(entity.getLastModifiedByUserId()).isNotNull();
     }
