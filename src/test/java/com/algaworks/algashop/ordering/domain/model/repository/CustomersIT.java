@@ -2,6 +2,7 @@ package com.algaworks.algashop.ordering.domain.model.repository;
 
 import com.algaworks.algashop.ordering.domain.model.entity.Customer;
 import com.algaworks.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.valueobject.Email;
 import com.algaworks.algashop.ordering.domain.model.valueobject.FullName;
 import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
@@ -9,12 +10,14 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.C
 import com.algaworks.algashop.ordering.infrastructure.persistence.provider.CustomersPersistenceProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -27,12 +30,12 @@ class CustomersIT {
     private Customers customers;
 
     @Autowired
-    public CustomersIT(Customers customers) {
+    CustomersIT(Customers customers) {
         this.customers = customers;
     }
 
     @Test
-    public void shouldPersistAndFind() {
+    void shouldPersistAndFind() {
         Customer originalCustomer = CustomerTestDataBuilder.brandNewCustomer().build();
         CustomerId customerId = originalCustomer.id();
         customers.add(originalCustomer);
@@ -49,7 +52,7 @@ class CustomersIT {
     }
 
     @Test
-    public void shouldUpdateExistingCustomer() {
+    void shouldUpdateExistingCustomer() {
         Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
         customers.add(customer);
 
@@ -66,7 +69,7 @@ class CustomersIT {
     }
 
     @Test
-    public void shouldNotAllowStaleUpdates() {
+    void shouldNotAllowStaleUpdates() {
         Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
         customers.add(customer);
 
@@ -89,7 +92,7 @@ class CustomersIT {
     }
 
     @Test
-    public void shouldCountExistingOrders() {
+    void shouldCountExistingOrders() {
         Assertions.assertThat(customers.count()).isZero();
 
         Customer customer1 = CustomerTestDataBuilder.brandNewCustomer().build();
@@ -102,12 +105,28 @@ class CustomersIT {
     }
 
     @Test
-    public void shouldReturnValidateIfOrderExists() {
+    void shouldReturnValidateIfOrderExists() {
         Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
         customers.add(customer);
 
         Assertions.assertThat(customers.exists(customer.id())).isTrue();
         Assertions.assertThat(customers.exists(new CustomerId())).isFalse();
+    }
+
+    @Test
+    void shouldFindByEmail() {
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
+        customers.add(customer);
+
+        Optional<Customer> customerOptional = customers.ofEmail(customer.email());
+
+        Assertions.assertThat(customerOptional).isPresent();
+    }
+
+    @Test
+    void shouldNotFindByEmailIfNoCustomerExistsWithEmail() {
+        Optional<Customer> customerOptional = customers.ofEmail(new Email(UUID.randomUUID() + "@email.com"));
+        Assertions.assertThat(customerOptional).isNotPresent();
     }
 
  }
