@@ -10,14 +10,12 @@ import com.algaworks.algashop.ordering.infrastructure.persistence.disassembler.C
 import com.algaworks.algashop.ordering.infrastructure.persistence.provider.CustomersPersistenceProvider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -79,10 +77,10 @@ class CustomersIT {
         customerT1.archive();
         customers.add(customerT1);
 
-        customerT2.changeName(new FullName("Alex","Silva"));
+        customerT2.changeName(new FullName("Alex", "Silva"));
 
         Assertions.assertThatExceptionOfType(ObjectOptimisticLockingFailureException.class)
-                .isThrownBy(()-> customers.add(customerT2));
+                .isThrownBy(() -> customers.add(customerT2));
 
         Customer savedCustomer = customers.ofId(customer.id()).orElseThrow();
 
@@ -124,9 +122,13 @@ class CustomersIT {
     }
 
     @Test
-    void shouldNotFindByEmailIfNoCustomerExistsWithEmail() {
-        Optional<Customer> customerOptional = customers.ofEmail(new Email(UUID.randomUUID() + "@email.com"));
-        Assertions.assertThat(customerOptional).isNotPresent();
+    void shouldReturnIfEmailIsInUse() {
+        Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
+        customers.add(customer);
+
+        Assertions.assertThat(customers.isEmailUnique(customer.email(), customer.id())).isTrue();
+        Assertions.assertThat(customers.isEmailUnique(customer.email(), new CustomerId())).isFalse();
+        Assertions.assertThat(customers.isEmailUnique(new Email("alex@gmail.com"), new CustomerId())).isTrue();
     }
 
- }
+}

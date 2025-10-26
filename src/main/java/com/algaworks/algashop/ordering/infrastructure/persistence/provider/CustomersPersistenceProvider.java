@@ -53,7 +53,12 @@ public class CustomersPersistenceProvider implements Customers {
 				);
 	}
 
-	private void update(Customer aggregateRoot, CustomerPersistenceEntity persistenceEntity) {
+    @Override
+    public boolean isEmailUnique(Email email, CustomerId exceptCustomerId) {
+        return !persistenceRepository.existsByEmailAndIdNot(email.value(), exceptCustomerId.value());
+    }
+
+    private void update(Customer aggregateRoot, CustomerPersistenceEntity persistenceEntity) {
 		persistenceEntity = assembler.merge(persistenceEntity, aggregateRoot);
 		entityManager.detach(persistenceEntity);
 		persistenceEntity = persistenceRepository.saveAndFlush(persistenceEntity);
