@@ -1,7 +1,10 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
-import com.algaworks.algashop.ordering.domain.model.entity.*;
-import com.algaworks.algashop.ordering.domain.model.valueobject.id.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.customer.Customer;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCart;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerId;
+import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCartTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.ShoppingCartPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
@@ -36,7 +39,7 @@ class ShoppingCartsPersistenceProviderIT {
     private ShoppingCartPersistenceEntityRepository entityRepository;
 
     @Autowired
-    ShoppingCartsPersistenceProviderIT(ShoppingCartsPersistenceProvider persistenceProvider,
+    public ShoppingCartsPersistenceProviderIT(ShoppingCartsPersistenceProvider persistenceProvider,
                                               CustomersPersistenceProvider customersPersistenceProvider,
                                               ShoppingCartPersistenceEntityRepository entityRepository) {
         this.persistenceProvider = persistenceProvider;
@@ -45,7 +48,7 @@ class ShoppingCartsPersistenceProviderIT {
     }
 
     @BeforeEach
-    void setup() {
+    public void setup() {
         if (!customersPersistenceProvider.exists(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)) {
             customersPersistenceProvider.add(
                     CustomerTestDataBuilder.existingCustomer().build()
@@ -54,7 +57,7 @@ class ShoppingCartsPersistenceProviderIT {
     }
 
     @Test
-    void shouldAddAndFindShoppingCart() {
+    public void shouldAddAndFindShoppingCart() {
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.aShoppingCart().build();
         assertThat(shoppingCart.version()).isNull();
 
@@ -69,7 +72,7 @@ class ShoppingCartsPersistenceProviderIT {
     }
 
     @Test
-    void shouldRemoveShoppingCartById() {
+    public void shouldRemoveShoppingCartById() {
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.aShoppingCart().build();
         persistenceProvider.add(shoppingCart);
         assertThat(persistenceProvider.exists(shoppingCart.id())).isTrue();
@@ -81,7 +84,7 @@ class ShoppingCartsPersistenceProviderIT {
     }
     
     @Test
-    void shouldRemoveShoppingCartByEntity() {
+    public void shouldRemoveShoppingCartByEntity() {
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.aShoppingCart().build();
         persistenceProvider.add(shoppingCart);
         assertThat(persistenceProvider.exists(shoppingCart.id())).isTrue();
@@ -92,7 +95,7 @@ class ShoppingCartsPersistenceProviderIT {
     }
 
     @Test
-    void shouldFindShoppingCartByCustomerId() {
+    public void shouldFindShoppingCartByCustomerId() {
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.aShoppingCart()
                 .customerId(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)
                 .build();
@@ -106,7 +109,7 @@ class ShoppingCartsPersistenceProviderIT {
     }
 
     @Test
-    void shouldCorrectlyCountShoppingCarts() {
+    public void shouldCorrectlyCountShoppingCarts() {
         long initialCount = persistenceProvider.count();
 
         ShoppingCart cart1 = ShoppingCartTestDataBuilder.aShoppingCart().build();
@@ -125,7 +128,7 @@ class ShoppingCartsPersistenceProviderIT {
     
     @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    void shouldAddAndFindWhenNoTransaction() {
+    public void shouldAddAndFindWhenNoTransaction() {
         ShoppingCart shoppingCart = ShoppingCartTestDataBuilder.aShoppingCart().build();
 
         persistenceProvider.add(shoppingCart);

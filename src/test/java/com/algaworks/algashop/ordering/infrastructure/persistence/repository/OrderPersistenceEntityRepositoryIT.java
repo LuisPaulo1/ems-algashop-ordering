@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.repository;
 
-import com.algaworks.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
@@ -27,14 +27,14 @@ class OrderPersistenceEntityRepositoryIT {
     private CustomerPersistenceEntity customerPersistenceEntity;
 
     @Autowired
-    OrderPersistenceEntityRepositoryIT(OrderPersistenceEntityRepository orderPersistenceEntityRepository,
-                                       CustomerPersistenceEntityRepository customerPersistenceEntityRepository) {
+    public OrderPersistenceEntityRepositoryIT(OrderPersistenceEntityRepository orderPersistenceEntityRepository,
+                                              CustomerPersistenceEntityRepository customerPersistenceEntityRepository) {
         this.orderPersistenceEntityRepository = orderPersistenceEntityRepository;
         this.customerPersistenceEntityRepository = customerPersistenceEntityRepository;
     }
 
     @BeforeEach
-    void setup() {
+    public void setup() {
         UUID customerId = CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID.value();
         if (!customerPersistenceEntityRepository.existsById(customerId)) {
             customerPersistenceEntity = customerPersistenceEntityRepository.saveAndFlush(
@@ -44,7 +44,7 @@ class OrderPersistenceEntityRepositoryIT {
     }
 
     @Test
-    void shouldPersist() {
+    public void shouldPersist() {
         OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder()
                 .customer(customerPersistenceEntity)
                 .build();
@@ -58,13 +58,13 @@ class OrderPersistenceEntityRepositoryIT {
     }
 
     @Test
-    void shouldCount() {
+    public void shouldCount() {
         long ordersCount = orderPersistenceEntityRepository.count();
         Assertions.assertThat(ordersCount).isZero();
     }
 
     @Test
-    void shouldSetAuditingValues() {
+    public void shouldSetAuditingValues() {
         OrderPersistenceEntity entity = OrderPersistenceEntityTestDataBuilder.existingOrder()
                 .customer(customerPersistenceEntity)
                 .build();

@@ -1,6 +1,6 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.entity;
 
-import com.algaworks.algashop.ordering.domain.model.utility.IdGenerator;
+import com.algaworks.algashop.ordering.domain.model.IdGenerator;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity.OrderPersistenceEntityBuilder;
 
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ public class OrderPersistenceEntityTestDataBuilder {
 
     public static OrderPersistenceEntityBuilder existingOrder() {
         return OrderPersistenceEntity.builder()
-                .id(IdGenerator.gererateTSID().toLong())
+                .id(IdGenerator.generateTSID().toLong())
                 .customer(CustomerPersistenceEntityTestDataBuilder.aCustomer().build())
                 .totalItems(3)
                 .totalAmount(new BigDecimal(1250))
@@ -29,7 +29,7 @@ public class OrderPersistenceEntityTestDataBuilder {
 
     public static OrderItemPersistenceEntity.OrderItemPersistenceEntityBuilder existingItem() {
         return OrderItemPersistenceEntity.builder()
-                .id(IdGenerator.gererateTSID().toLong())
+                .id(IdGenerator.generateTSID().toLong())
                 .price(new BigDecimal(500))
                 .quantity(2)
                 .totalAmount(new BigDecimal(1000))
@@ -39,7 +39,7 @@ public class OrderPersistenceEntityTestDataBuilder {
 
     public static OrderItemPersistenceEntity.OrderItemPersistenceEntityBuilder existingItemAlt() {
         return OrderItemPersistenceEntity.builder()
-                .id(IdGenerator.gererateTSID().toLong())
+                .id(IdGenerator.generateTSID().toLong())
                 .price(new BigDecimal(250))
                 .quantity(1)
                 .totalAmount(new BigDecimal(250))

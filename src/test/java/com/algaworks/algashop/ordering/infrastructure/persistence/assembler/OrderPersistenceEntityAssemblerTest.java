@@ -1,8 +1,8 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.assembler;
 
-import com.algaworks.algashop.ordering.domain.model.entity.Order;
-import com.algaworks.algashop.ordering.domain.model.entity.OrderItem;
-import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.order.Order;
+import com.algaworks.algashop.ordering.domain.model.order.OrderItem;
+import com.algaworks.algashop.ordering.domain.model.order.OrderTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.CustomerPersistenceEntityTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderItemPersistenceEntity;
 import com.algaworks.algashop.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
@@ -47,16 +47,16 @@ class OrderPersistenceEntityAssemblerTest {
         Order order = OrderTestDataBuilder.anOrder().build();
         OrderPersistenceEntity orderPersistenceEntity = assembler.fromDomain(order);
         assertThat(orderPersistenceEntity).satisfies(
-                p -> assertThat(p.getId()).isEqualTo(order.id().value().toLong()),
-                p -> assertThat(p.getCustomerId()).isEqualTo(order.customerId().value()),
-                p -> assertThat(p.getTotalAmount()).isEqualTo(order.totalAmount().value()),
-                p -> assertThat(p.getTotalItems()).isEqualTo(order.totalItems().value()),
-                p -> assertThat(p.getStatus()).isEqualTo(order.status().name()),
-                p -> assertThat(p.getPaymentMethod()).isEqualTo(order.paymentMethod().name()),
-                p -> assertThat(p.getPlacedAt()).isEqualTo(order.placedAt()),
-                p -> assertThat(p.getPaidAt()).isEqualTo(order.paidAt()),
-                p -> assertThat(p.getCanceledAt()).isEqualTo(order.canceledAt()),
-                p -> assertThat(p.getReadyAt()).isEqualTo(order.readyAt())
+            p-> assertThat(p.getId()).isEqualTo(order.id().value().toLong()),
+            p-> assertThat(p.getCustomerId()).isEqualTo(order.customerId().value()),
+            p -> assertThat(p.getTotalAmount()).isEqualTo(order.totalAmount().value()),
+            p -> assertThat(p.getTotalItems()).isEqualTo(order.totalItems().value()),
+            p -> assertThat(p.getStatus()).isEqualTo(order.status().name()),
+            p -> assertThat(p.getPaymentMethod()).isEqualTo(order.paymentMethod().name()),
+            p -> assertThat(p.getPlacedAt()).isEqualTo(order.placedAt()),
+            p -> assertThat(p.getPaidAt()).isEqualTo(order.paidAt()),
+            p -> assertThat(p.getCanceledAt()).isEqualTo(order.canceledAt()),
+            p -> assertThat(p.getReadyAt()).isEqualTo(order.readyAt())
         );
     }
 

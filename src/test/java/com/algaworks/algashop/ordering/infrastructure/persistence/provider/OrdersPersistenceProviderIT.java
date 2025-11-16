@@ -1,10 +1,10 @@
 package com.algaworks.algashop.ordering.infrastructure.persistence.provider;
 
 
-import com.algaworks.algashop.ordering.domain.model.entity.CustomerTestDataBuilder;
-import com.algaworks.algashop.ordering.domain.model.entity.Order;
-import com.algaworks.algashop.ordering.domain.model.entity.OrderStatus;
-import com.algaworks.algashop.ordering.domain.model.entity.OrderTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerTestDataBuilder;
+import com.algaworks.algashop.ordering.domain.model.order.Order;
+import com.algaworks.algashop.ordering.domain.model.order.OrderStatus;
+import com.algaworks.algashop.ordering.domain.model.order.OrderTestDataBuilder;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.CustomerPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
 import com.algaworks.algashop.ordering.infrastructure.persistence.config.SpringDataAuditingConfig;
@@ -38,15 +38,15 @@ class OrdersPersistenceProviderIT {
 
     @Autowired
     public OrdersPersistenceProviderIT(OrdersPersistenceProvider persistenceProvider,
-                                CustomersPersistenceProvider customersPersistenceProvider,
-                                OrderPersistenceEntityRepository entityRepository) {
+                                       CustomersPersistenceProvider customersPersistenceProvider,
+                                       OrderPersistenceEntityRepository entityRepository) {
         this.persistenceProvider = persistenceProvider;
         this.customersPersistenceProvider = customersPersistenceProvider;
         this.entityRepository = entityRepository;
     }
 
     @BeforeEach
-    void setup() {
+    public void setup() {
         if (!customersPersistenceProvider.exists(CustomerTestDataBuilder.DEFAULT_CUSTOMER_ID)) {
             customersPersistenceProvider.add(
                     CustomerTestDataBuilder.existingCustomer().build()
@@ -55,7 +55,7 @@ class OrdersPersistenceProviderIT {
     }
 
     @Test
-    void shouldUpdateAndKeepPersistenceEntityState() {
+    public void shouldUpdateAndKeepPersistenceEntityState() {
         Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
         long orderId = order.id().value().toLong();
         persistenceProvider.add(order);
@@ -84,12 +84,12 @@ class OrdersPersistenceProviderIT {
 
     @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    void shouldAddFindAndNotFailWhenNoTransaction() {
+    public void shouldAddFindAndNotFailWhenNoTransaction() {
         Order order = OrderTestDataBuilder.anOrder().build();
         persistenceProvider.add(order);
 
         Assertions.assertThatNoException().isThrownBy(
-                () -> persistenceProvider.ofId(order.id()).orElseThrow()
+                ()-> persistenceProvider.ofId(order.id()).orElseThrow()
         );
     }
 }
