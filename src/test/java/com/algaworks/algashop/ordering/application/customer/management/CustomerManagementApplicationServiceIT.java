@@ -1,6 +1,7 @@
 package com.algaworks.algashop.ordering.application.customer.management;
 
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerArchivedException;
+import com.algaworks.algashop.ordering.domain.model.customer.CustomerEmailIsInUseException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class CustomerManagementApplicationServiceIT {
                         "John",
                         "Doe",
                         "johndoe@email.com",
-                        LocalDate.of(1991, 7, 5)
+                        LocalDate.of(1991, 7,5)
                 );
 
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
@@ -69,7 +70,7 @@ class CustomerManagementApplicationServiceIT {
                         "Matt",
                         "Damon",
                         "johndoe@email.com",
-                        LocalDate.of(1991, 7, 5)
+                        LocalDate.of(1991, 7,5)
                 );
 
         Assertions.assertThat(customerOutput.getRegisteredAt()).isNotNull();
@@ -130,6 +131,60 @@ class CustomerManagementApplicationServiceIT {
 
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class)
                 .isThrownBy(() -> customerManagementApplicationService.archive(customerId));
+    }
+
+    @Test
+    public void shouldChangeEmail() {
+        CustomerInput input = CustomerInputTestDataBuilder.aCustomer().build();
+        UUID customerId = customerManagementApplicationService.create(input);
+        Assertions.assertThat(customerId).isNotNull();
+
+        String newEmail = "newemail@email.com";
+
+        customerManagementApplicationService.changeEmail(customerId, newEmail);
+
+        CustomerOutput customerOutput = customerManagementApplicationService.findById(customerId);
+
+        Assertions.assertThat(customerOutput)
+                .extracting(
+                        CustomerOutput::getId,
+                        CustomerOutput::getFirstName,
+                        CustomerOutput::getLastName,
+                        CustomerOutput::getEmail
+                ).containsExactly(
+                        customerId,
+                        "John",
+                        "Doe",
+                        newEmail
+                );
+    }
+
+    @Test
+    public void shouldThrowCustomerEmailIsInUseExceptionWhenChangingToExistingEmail() {
+        CustomerInput firstCustomer = CustomerInputTestDataBuilder.aCustomer().build();
+        UUID firstCustomerId = customerManagementApplicationService.create(firstCustomer);
+        Assertions.assertThat(firstCustomerId).isNotNull();
+
+        CustomerInput secondCustomer = CustomerInputTestDataBuilder.aCustomer()
+                .email("second@email.com")
+                .build();
+        UUID secondCustomerId = customerManagementApplicationService.create(secondCustomer);
+        Assertions.assertThat(secondCustomerId).isNotNull();
+
+        Assertions.assertThatExceptionOfType(CustomerEmailIsInUseException.class)
+                .isThrownBy(() ->
+                        customerManagementApplicationService.changeEmail(
+                                secondCustomerId,
+                                firstCustomer.getEmail()
+                        )
+                );
+    }
+
+    @Test
+    public void shouldThrowCustomerNotFoundExceptionWhenChangingEmailOfNonExistingCustomer() {
+        UUID nonExistingId = UUID.randomUUID();
+        Assertions.assertThatExceptionOfType(CustomerNotFoundException.class)
+                .isThrownBy(() -> customerManagementApplicationService.changeEmail(nonExistingId, "any@email.com"));
     }
 
 }
