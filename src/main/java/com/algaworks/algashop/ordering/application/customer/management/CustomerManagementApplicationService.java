@@ -1,7 +1,6 @@
 package com.algaworks.algashop.ordering.application.customer.management;
 
 import com.algaworks.algashop.ordering.application.commons.AddressData;
-import com.algaworks.algashop.ordering.application.utility.Mapper;
 import com.algaworks.algashop.ordering.domain.model.commons.*;
 import com.algaworks.algashop.ordering.domain.model.customer.*;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,6 @@ public class CustomerManagementApplicationService {
 
     private final CustomerRegistrationService customerRegistration;
     private final Customers customers;
-
-    private final Mapper mapper;
 
     @Transactional
     public UUID create(CustomerInput input) {
@@ -48,22 +45,13 @@ public class CustomerManagementApplicationService {
         return customer.id().value();
     }
 
-    @Transactional(readOnly = true)
-    public CustomerOutput findById(UUID customerId) {
-        Objects.requireNonNull(customerId);
-        Customer customer = customers.ofId(new CustomerId(customerId))
-                .orElseThrow(CustomerNotFoundException::new);
-
-        return mapper.convert(customer, CustomerOutput.class);
-    }
-
     @Transactional
     public void update(UUID rawCustomerId, CustomerUpdateInput input) {
         Objects.requireNonNull(input);
         Objects.requireNonNull(rawCustomerId);
 
         Customer customer = customers.ofId(new CustomerId(rawCustomerId))
-                .orElseThrow(CustomerNotFoundException::new);
+                .orElseThrow(() -> new CustomerNotFoundException());
 
         customer.changeName(new FullName(input.getFirstName(), input.getLastName()));
         customer.changePhone(new Phone(input.getPhone()));
@@ -91,16 +79,18 @@ public class CustomerManagementApplicationService {
 
     @Transactional
     public void archive(UUID rawCustomerId) {
+        CustomerId customerId = new CustomerId(rawCustomerId);
         Customer customer = customers.ofId(new CustomerId(rawCustomerId))
-                .orElseThrow(CustomerNotFoundException::new);
+                .orElseThrow(()-> new CustomerNotFoundException());
         customer.archive();
         customers.add(customer);
     }
 
     @Transactional
     public void changeEmail(UUID rawCustomerId, String newEmail) {
+        CustomerId customerId = new CustomerId(rawCustomerId);
         Customer customer = customers.ofId(new CustomerId(rawCustomerId))
-                .orElseThrow(CustomerNotFoundException::new);
+                .orElseThrow(()-> new CustomerNotFoundException());
         customerRegistration.changeEmail(customer, new Email(newEmail));
         customers.add(customer);
     }
