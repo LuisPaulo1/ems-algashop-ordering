@@ -1,7 +1,7 @@
 plugins {
     id 'idea'
     id 'java'
-    id 'org.springframework.boot' version '3.4.4'
+    id 'org.springframework.boot' version '3.5.3'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -32,13 +32,16 @@ dependencies {
     implementation 'io.hypersistence:hypersistence-tsid:2.1.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.modelmapper:modelmapper:3.2.4'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     runtimeOnly 'com.h2database:h2'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'io.rest-assured:spring-mock-mvc'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.assertj:assertj-core:3.27.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    mockitoAgent('org.mockito:mockito-core:5.14.2') { transitive = false }
+    mockitoAgent('org.mockito:mockito-core:5.14.2') {transitive = false}
 }
 
 tasks.named('test') {
