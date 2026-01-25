@@ -1,9 +1,10 @@
-package com.algaworks.algashop.ordering.presentation;
+package com.algaworks.algashop.ordering.presentation.customer;
 
 import com.algaworks.algashop.ordering.application.commons.AddressData;
 import com.algaworks.algashop.ordering.application.customer.management.CustomerInput;
 import com.algaworks.algashop.ordering.application.customer.management.CustomerManagementApplicationService;
 import com.algaworks.algashop.ordering.application.customer.query.*;
+import com.algaworks.algashop.ordering.application.shoppingcart.query.ShoppingCartQueryService;
 import com.algaworks.algashop.ordering.domain.model.DomainException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerEmailIsInUseException;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
@@ -38,6 +39,9 @@ class CustomerControllerContractTest {
     @MockitoBean
     private CustomerQueryService customerQueryService;
 
+    @MockitoBean
+    private ShoppingCartQueryService shoppingCartQueryService;
+
     @BeforeEach
     public void setupAll() {
         RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(context)
@@ -57,25 +61,25 @@ class CustomerControllerContractTest {
                 .thenReturn(customerOutput);
 
         String jsonInput = """
-        {
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "johndoe@email.com",
-          "document": "12345",
-          "phone": "1191234564",
-          "birthDate": "1991-07-05",
-          "promotionNotificationsAllowed": false,
-          "address": {
-            "street": "Bourbon Street",
-            "number": "2000",
-            "complement": "apt 122",
-            "neighborhood": "North Ville",
-            "city": "Yostfort",
-            "state": "South Carolina",
-            "zipCode": "12321"
-          }
-        }
-        """;
+                {
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "johndoe@email.com",
+                  "document": "12345",
+                  "phone": "1191234564",
+                  "birthDate": "1991-07-05",
+                  "promotionNotificationsAllowed": false,
+                  "address": {
+                    "street": "Bourbon Street",
+                    "number": "2000",
+                    "complement": "apt 122",
+                    "neighborhood": "North Ville",
+                    "city": "Yostfort",
+                    "state": "South Carolina",
+                    "zipCode": "12321"
+                  }
+                }
+                """;
 
         RestAssuredMockMvc
                 .given()
@@ -113,25 +117,25 @@ class CustomerControllerContractTest {
     @Test
     public void createCustomerError400Contract() {
         String jsonInput = """
-        {
-          "firstName": "",
-          "lastName": "",
-          "email": "johndoe@email.com",
-          "document": "12345",
-          "phone": "1191234564",
-          "birthDate": "1991-07-05",
-          "promotionNotificationsAllowed": false,
-          "address": {
-            "street": "Bourbon Street",
-            "number": "2000",
-            "complement": "apt 122",
-            "neighborhood": "North Ville",
-            "city": "Yostfort",
-            "state": "South Carolina",
-            "zipCode": "12321"
-          }
-        }
-        """;
+                {
+                  "firstName": "",
+                  "lastName": "",
+                  "email": "johndoe@email.com",
+                  "document": "12345",
+                  "phone": "1191234564",
+                  "birthDate": "1991-07-05",
+                  "promotionNotificationsAllowed": false,
+                  "address": {
+                    "street": "Bourbon Street",
+                    "number": "2000",
+                    "complement": "apt 122",
+                    "neighborhood": "North Ville",
+                    "city": "Yostfort",
+                    "state": "South Carolina",
+                    "zipCode": "12321"
+                  }
+                }
+                """;
 
         RestAssuredMockMvc
                 .given()
@@ -283,25 +287,25 @@ class CustomerControllerContractTest {
                 .thenThrow(CustomerEmailIsInUseException.class);
 
         String jsonInput = """
-        {
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "johndoe@email.com",
-          "document": "12345",
-          "phone": "1191234564",
-          "birthDate": "1991-07-05",
-          "promotionNotificationsAllowed": false,
-          "address": {
-            "street": "Bourbon Street",
-            "number": "2000",
-            "complement": "apt 122",
-            "neighborhood": "North Ville",
-            "city": "Yostfort",
-            "state": "South Carolina",
-            "zipCode": "12321"
-          }
-        }
-        """;
+                {
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "johndoe@email.com",
+                  "document": "12345",
+                  "phone": "1191234564",
+                  "birthDate": "1991-07-05",
+                  "promotionNotificationsAllowed": false,
+                  "address": {
+                    "street": "Bourbon Street",
+                    "number": "2000",
+                    "complement": "apt 122",
+                    "neighborhood": "North Ville",
+                    "city": "Yostfort",
+                    "state": "South Carolina",
+                    "zipCode": "12321"
+                  }
+                }
+                """;
 
         RestAssuredMockMvc
                 .given()
@@ -328,25 +332,25 @@ class CustomerControllerContractTest {
                 .thenThrow(DomainException.class);
 
         String jsonInput = """
-        {
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "johndoe@email.com",
-          "document": "12345",
-          "phone": "1191234564",
-          "birthDate": "1991-07-05",
-          "promotionNotificationsAllowed": false,
-          "address": {
-            "street": "Bourbon Street",
-            "number": "2000",
-            "complement": "apt 122",
-            "neighborhood": "North Ville",
-            "city": "Yostfort",
-            "state": "South Carolina",
-            "zipCode": "12321"
-          }
-        }
-        """;
+                {
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "johndoe@email.com",
+                  "document": "12345",
+                  "phone": "1191234564",
+                  "birthDate": "1991-07-05",
+                  "promotionNotificationsAllowed": false,
+                  "address": {
+                    "street": "Bourbon Street",
+                    "number": "2000",
+                    "complement": "apt 122",
+                    "neighborhood": "North Ville",
+                    "city": "Yostfort",
+                    "state": "South Carolina",
+                    "zipCode": "12321"
+                  }
+                }
+                """;
 
         RestAssuredMockMvc
                 .given()
@@ -373,25 +377,25 @@ class CustomerControllerContractTest {
                 .thenThrow(RuntimeException.class);
 
         String jsonInput = """
-        {
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "johndoe@email.com",
-          "document": "12345",
-          "phone": "1191234564",
-          "birthDate": "1991-07-05",
-          "promotionNotificationsAllowed": false,
-          "address": {
-            "street": "Bourbon Street",
-            "number": "2000",
-            "complement": "apt 122",
-            "neighborhood": "North Ville",
-            "city": "Yostfort",
-            "state": "South Carolina",
-            "zipCode": "12321"
-          }
-        }
-        """;
+                {
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "johndoe@email.com",
+                  "document": "12345",
+                  "phone": "1191234564",
+                  "birthDate": "1991-07-05",
+                  "promotionNotificationsAllowed": false,
+                  "address": {
+                    "street": "Bourbon Street",
+                    "number": "2000",
+                    "complement": "apt 122",
+                    "neighborhood": "North Ville",
+                    "city": "Yostfort",
+                    "state": "South Carolina",
+                    "zipCode": "12321"
+                  }
+                }
+                """;
 
         RestAssuredMockMvc
                 .given()
@@ -423,25 +427,25 @@ class CustomerControllerContractTest {
                 .thenReturn(customer);
 
         String jsonInput = """
-        {
-          "firstName": "John",
-          "lastName": "Doe",
-          "email": "johndoe@email.com",
-          "document": "12345",
-          "phone": "1191234564",
-          "birthDate": "1991-07-05",
-          "promotionNotificationsAllowed": false,
-          "address": {
-            "street": "Bourbon Street",
-            "number": "2000",
-            "complement": "apt 122",
-            "neighborhood": "North Ville",
-            "city": "Yostfort",
-            "state": "South Carolina",
-            "zipCode": "12321"
-          }
-        }
-        """;
+                {
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "johndoe@email.com",
+                  "document": "12345",
+                  "phone": "1191234564",
+                  "birthDate": "1991-07-05",
+                  "promotionNotificationsAllowed": false,
+                  "address": {
+                    "street": "Bourbon Street",
+                    "number": "2000",
+                    "complement": "apt 122",
+                    "neighborhood": "North Ville",
+                    "city": "Yostfort",
+                    "state": "South Carolina",
+                    "zipCode": "12321"
+                  }
+                }
+                """;
 
         RestAssuredMockMvc
                 .given()

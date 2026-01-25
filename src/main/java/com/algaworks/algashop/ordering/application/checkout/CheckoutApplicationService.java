@@ -73,7 +73,7 @@ public class CheckoutApplicationService {
 
     private Product findProduct(ProductId productId) {
         return productCatalogService.ofId(productId)
-                .orElseThrow(() -> new ProductNotFoundException());
+                .orElseThrow(()-> new ProductNotFoundException());
     }
 
 }

@@ -1,4 +1,4 @@
-package com.algaworks.algashop.ordering.presentation;
+package com.algaworks.algashop.ordering.presentation.customer;
 
 import com.algaworks.algashop.ordering.application.customer.management.CustomerInput;
 import com.algaworks.algashop.ordering.application.customer.management.CustomerManagementApplicationService;
@@ -7,6 +7,9 @@ import com.algaworks.algashop.ordering.application.customer.query.CustomerFilter
 import com.algaworks.algashop.ordering.application.customer.query.CustomerOutput;
 import com.algaworks.algashop.ordering.application.customer.query.CustomerQueryService;
 import com.algaworks.algashop.ordering.application.customer.query.CustomerSummaryOutput;
+import com.algaworks.algashop.ordering.application.shoppingcart.query.ShoppingCartOutput;
+import com.algaworks.algashop.ordering.application.shoppingcart.query.ShoppingCartQueryService;
+import com.algaworks.algashop.ordering.presentation.PageModel;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.UUID;
 
-import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.fromMethodCall;
-import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
+import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.*;
 
 @RestController
 @RequestMapping("/api/v1/customers")
@@ -26,6 +28,7 @@ public class CustomerController {
 
     private final CustomerManagementApplicationService customerManagementApplicationService;
     private final CustomerQueryService customerQueryService;
+    private final ShoppingCartQueryService shoppingCartQueryService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -46,6 +49,11 @@ public class CustomerController {
     @GetMapping("/{customerId}")
     public CustomerOutput findById(@PathVariable UUID customerId) {
         return customerQueryService.findById(customerId);
+    }
+
+    @GetMapping("/{customerId}/shopping-cart")
+    public ShoppingCartOutput findShoppingCartByCustomerId(@PathVariable UUID customerId) {
+        return shoppingCartQueryService.findByCustomerId(customerId);
     }
 
     @PutMapping("/{customerId}")
