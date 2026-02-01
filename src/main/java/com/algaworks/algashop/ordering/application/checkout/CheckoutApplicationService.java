@@ -4,10 +4,7 @@ import com.algaworks.algashop.ordering.domain.model.commons.ZipCode;
 import com.algaworks.algashop.ordering.domain.model.customer.Customer;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
 import com.algaworks.algashop.ordering.domain.model.customer.Customers;
-import com.algaworks.algashop.ordering.domain.model.order.CheckoutService;
-import com.algaworks.algashop.ordering.domain.model.order.Order;
-import com.algaworks.algashop.ordering.domain.model.order.Orders;
-import com.algaworks.algashop.ordering.domain.model.order.PaymentMethod;
+import com.algaworks.algashop.ordering.domain.model.order.*;
 import com.algaworks.algashop.ordering.domain.model.order.shipping.OriginAddressService;
 import com.algaworks.algashop.ordering.domain.model.order.shipping.ShippingCostService;
 import com.algaworks.algashop.ordering.domain.model.product.Product;
@@ -19,9 +16,11 @@ import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCartId;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCartNotFoundException;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCarts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Service
@@ -40,6 +39,8 @@ public class CheckoutApplicationService {
     private final ShippingCostService shippingCostService;
     private final OriginAddressService originAddressService;
     private final ProductCatalogService productCatalogService;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public String checkout(CheckoutInput input) {
@@ -62,6 +63,12 @@ public class CheckoutApplicationService {
         orders.add(order);
         shoppingCarts.add(shoppingCart);
 
+        applicationEventPublisher.publishEvent(new OrderPlacedEvent(
+                order.id(),
+                order.customerId(),
+                OffsetDateTime.now()
+        ));
+
         return order.id().toString();
     }
 
@@ -73,7 +80,7 @@ public class CheckoutApplicationService {
 
     private Product findProduct(ProductId productId) {
         return productCatalogService.ofId(productId)
-                .orElseThrow(()-> new ProductNotFoundException());
+                .orElseThrow(() -> new ProductNotFoundException());
     }
 
 }

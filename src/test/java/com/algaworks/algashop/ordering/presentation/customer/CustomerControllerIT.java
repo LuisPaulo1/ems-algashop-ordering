@@ -14,14 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.UUID;
 
 import static io.restassured.config.JsonConfig.jsonConfig;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Sql(scripts = "classpath:db/clean/afterMigrate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class CustomerControllerIT {
 
     @LocalServerPort
@@ -53,19 +53,19 @@ public class CustomerControllerIT {
         String json = AlgaShopResourceUtils.readContent("json/create-customer.json");
 
         UUID createdCustomerId = RestAssured
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(json)
-            .when()
+                .when()
                 .post("/api/v1/customers")
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .statusCode(HttpStatus.CREATED.value())
                 .body("id", Matchers.not(Matchers.emptyString()))
                 .extract()
-            .jsonPath().getUUID("id");
+                .jsonPath().getUUID("id");
 
         Assertions.assertThat(customerRepository.existsById(createdCustomerId)).isTrue();
     }
@@ -73,11 +73,11 @@ public class CustomerControllerIT {
     @Test
     public void shouldArchiveCustomer() {
         RestAssured
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-            .when()
+                .when()
                 .delete("/api/v1/customers/{customerId}", validCustomerId)
-            .then()
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
