@@ -53,10 +53,10 @@ public class OrdersPersistenceProvider implements Orders {
         long orderId = aggregateRoot.id().value().toLong();
 
         persistenceRepository.findById(orderId)
-            .ifPresentOrElse(
-                (persistenceEntity) -> update(aggregateRoot, persistenceEntity),
-                ()-> insert(aggregateRoot)
-            );
+                .ifPresentOrElse(
+                        (persistenceEntity) -> update(aggregateRoot, persistenceEntity),
+                        () -> insert(aggregateRoot)
+                );
     }
 
     @Override

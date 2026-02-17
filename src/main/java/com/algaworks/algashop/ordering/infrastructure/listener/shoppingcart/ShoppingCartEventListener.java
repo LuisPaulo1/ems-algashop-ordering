@@ -29,5 +29,4 @@ public class ShoppingCartEventListener {
     public void listen(ShoppingCartItemRemovedEvent event) {
 
     }
-
 }

@@ -40,12 +40,18 @@ public class OrderPersistenceEntityAssembler {
         orderPersistenceEntity.setBilling(toBillingEmbeddable(order.billing()));
         orderPersistenceEntity.setShipping(toShippingEmbeddable(order.shipping()));
 
+        if (order.creditCardId() != null) {
+            orderPersistenceEntity.setCreditCardId(order.creditCardId().id());
+        }
+
         Set<OrderItemPersistenceEntity> mergedItems = mergeItems(order, orderPersistenceEntity);
         orderPersistenceEntity.replaceItems(mergedItems);
 
         var customerPersistenceEntity = customerPersistenceEntityRepository
                 .getReferenceById(order.customerId().value());
         orderPersistenceEntity.setCustomer(customerPersistenceEntity);
+
+        orderPersistenceEntity.addEvents(order.domainEvents());
 
         return orderPersistenceEntity;
     }
@@ -102,6 +108,7 @@ public class OrderPersistenceEntityAssembler {
                 .document(billing.document().value())
                 .phone(billing.phone().value())
                 .address(toAddressEmbeddable(billing.address()))
+                .email(billing.email().value())
                 .build();
     }
 

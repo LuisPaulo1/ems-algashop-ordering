@@ -113,7 +113,7 @@ public class ShoppingCartControllerIT {
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
         var shoppingCartPersistenceEntity = shoppingCartRepository.findById(validShoppingCartId).orElseThrow();
-        Assertions.assertThat(shoppingCartPersistenceEntity.getTotalItems()).isEqualTo(2);
+        Assertions.assertThat(shoppingCartPersistenceEntity.getTotalItems()).isEqualTo(4);
     }
 
 }

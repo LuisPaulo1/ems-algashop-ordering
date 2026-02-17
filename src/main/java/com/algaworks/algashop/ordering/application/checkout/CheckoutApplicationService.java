@@ -1,5 +1,6 @@
 package com.algaworks.algashop.ordering.application.checkout;
 
+import com.algaworks.algashop.ordering.domain.model.DomainException;
 import com.algaworks.algashop.ordering.domain.model.commons.ZipCode;
 import com.algaworks.algashop.ordering.domain.model.customer.Customer;
 import com.algaworks.algashop.ordering.domain.model.customer.CustomerNotFoundException;
@@ -16,11 +17,9 @@ import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCartId;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCartNotFoundException;
 import com.algaworks.algashop.ordering.domain.model.shoppingcart.ShoppingCarts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Service
@@ -40,12 +39,19 @@ public class CheckoutApplicationService {
     private final OriginAddressService originAddressService;
     private final ProductCatalogService productCatalogService;
 
-    private final ApplicationEventPublisher applicationEventPublisher;
-
     @Transactional
     public String checkout(CheckoutInput input) {
         Objects.requireNonNull(input);
         PaymentMethod paymentMethod = PaymentMethod.valueOf(input.getPaymentMethod());
+
+        CreditCardId creditCardId = null;
+
+        if (paymentMethod.equals(PaymentMethod.CREDIT_CARD)) {
+            if (input.getCreditCardId() == null) {
+                throw new DomainException("Credit card id is required");
+            }
+            creditCardId = new CreditCardId(input.getCreditCardId());
+        }
 
         ShoppingCartId shoppingCartId = new ShoppingCartId(input.getShoppingCartId());
         ShoppingCart shoppingCart = shoppingCarts.ofId(shoppingCartId)
@@ -58,16 +64,10 @@ public class CheckoutApplicationService {
         Order order = checkoutService.checkout(customer, shoppingCart,
                 billingInputDisassembler.toDomainModel(input.getBilling()),
                 shippingInputDisassembler.toDomainModel(input.getShipping(), shippingCalculationResult),
-                paymentMethod);
+                paymentMethod, creditCardId);
 
         orders.add(order);
         shoppingCarts.add(shoppingCart);
-
-        applicationEventPublisher.publishEvent(new OrderPlacedEvent(
-                order.id(),
-                order.customerId(),
-                OffsetDateTime.now()
-        ));
 
         return order.id().toString();
     }
@@ -80,7 +80,7 @@ public class CheckoutApplicationService {
 
     private Product findProduct(ProductId productId) {
         return productCatalogService.ofId(productId)
-                .orElseThrow(() -> new ProductNotFoundException());
+                .orElseThrow(()-> new ProductNotFoundException());
     }
 
 }

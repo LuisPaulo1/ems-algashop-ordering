@@ -7,11 +7,13 @@ import com.algaworks.algashop.ordering.domain.model.customer.*;
 import com.algaworks.algashop.ordering.domain.model.order.*;
 import com.algaworks.algashop.ordering.domain.model.product.Product;
 import com.algaworks.algashop.ordering.domain.model.product.ProductTestDataBuilder;
+import com.algaworks.algashop.ordering.infrastructure.listener.customer.CustomerEventListener;
 import io.hypersistence.tsid.TSID;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -28,7 +30,10 @@ class CustomerLoyaltyPointsApplicationServiceIT {
 
     @Autowired
     private Orders orders;
-    
+
+    @MockitoBean
+    private CustomerEventListener customerEventListener;
+
     @Test
     void shouldAddLoyaltyPointsToCustomerWhenOrderIsValidAndReady() {
         Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
@@ -54,7 +59,7 @@ class CustomerLoyaltyPointsApplicationServiceIT {
         Assertions.assertThat(updatedCustomer).isNotNull();
         Assertions.assertThat(updatedCustomer.loyaltyPoints()).isEqualTo(new LoyaltyPoints(10));
     }
-    
+
     @Test
     void shouldThrowCustomerNotFoundExceptionWhenCustomerIdDoesNotExist() {
         UUID nonExistingCustomerId = UUID.randomUUID();
@@ -70,16 +75,16 @@ class CustomerLoyaltyPointsApplicationServiceIT {
         orders.add(order);
 
         Assertions.assertThatExceptionOfType(CustomerNotFoundException.class)
-            .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(nonExistingCustomerId, order.id().toString()));
+                .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(nonExistingCustomerId, order.id().toString()));
     }
-    
+
     @Test
     void shouldThrowOrderNotFoundExceptionWhenOrderIdDoesNotExist() {
         Customer customer = CustomerTestDataBuilder.brandNewCustomer().build();
         customers.add(customer);
         String nonExistingOrderId = TSID.fast().toString();
         Assertions.assertThatExceptionOfType(OrderNotFoundException.class)
-            .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(customer.id().value(), nonExistingOrderId));
+                .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(customer.id().value(), nonExistingOrderId));
     }
 
     @Test
@@ -94,9 +99,9 @@ class CustomerLoyaltyPointsApplicationServiceIT {
                 .status(OrderStatus.READY)
                 .build();
         orders.add(order);
-        
+
         Assertions.assertThatExceptionOfType(CustomerArchivedException.class)
-            .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(customer.id().value(), order.id().toString()));
+                .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(customer.id().value(), order.id().toString()));
     }
 
     @Test
@@ -109,7 +114,7 @@ class CustomerLoyaltyPointsApplicationServiceIT {
                 .email(new Email("customerB@example.com")).build();
         customers.add(customerA);
         customers.add(customerB);
-        
+
         Order orderForCustomerB = OrderTestDataBuilder.anOrder()
                 .customerId(customerB.id())
                 .status(OrderStatus.READY)
@@ -118,8 +123,8 @@ class CustomerLoyaltyPointsApplicationServiceIT {
         orders.add(orderForCustomerB);
 
         Assertions.assertThatExceptionOfType(OrderNotBelongsToCustomerException.class)
-            .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(customerA.id().value(),
-                    orderForCustomerB.id().toString()));
+                .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(customerA.id().value(),
+                        orderForCustomerB.id().toString()));
     }
 
     @Test
@@ -134,7 +139,7 @@ class CustomerLoyaltyPointsApplicationServiceIT {
         orders.add(order);
 
         Assertions.assertThatExceptionOfType(CantAddLoyaltyPointsOrderIsNotReady.class)
-            .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(customer.id().value(), order.id().toString()));
+                .isThrownBy(() -> loyaltyPointsService.addLoyaltyPoints(customer.id().value(), order.id().toString()));
     }
 
     @Test
