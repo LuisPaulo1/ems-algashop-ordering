@@ -15,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -83,13 +83,13 @@ class CustomerControllerContractTest {
         """;
 
         RestAssuredMockMvc
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonInput)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
+                .when()
                 .post("/api/v1/customers")
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .statusCode(HttpStatus.CREATED.value())
@@ -139,24 +139,24 @@ class CustomerControllerContractTest {
         """;
 
         RestAssuredMockMvc
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(jsonInput)
-            .when()
+                .when()
                 .post("/api/v1/customers")
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
                 .statusCode(HttpStatus.BAD_REQUEST.value())
-            .body(
-                    "status", Matchers.is(HttpStatus.BAD_REQUEST.value()),
-                    "type", Matchers.is("/errors/invalid-fields"),
-                    "title", Matchers.notNullValue(),
-                    "detail", Matchers.notNullValue(),
-                    "instance", Matchers.notNullValue(),
-                    "fields", Matchers.notNullValue()
-            );
+                .body(
+                        "status", Matchers.is(HttpStatus.BAD_REQUEST.value()),
+                        "type", Matchers.is("/errors/invalid-fields"),
+                        "title", Matchers.notNullValue(),
+                        "detail", Matchers.notNullValue(),
+                        "instance", Matchers.notNullValue(),
+                        "fields", Matchers.notNullValue()
+                );
 
     }
 
@@ -174,13 +174,13 @@ class CustomerControllerContractTest {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
         RestAssuredMockMvc
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("size", sizeLimit)
                 .queryParam("page", pageNumber)
-            .when()
+                .when()
                 .get("/api/v1/customers")
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .statusCode(HttpStatus.OK.value())
@@ -228,14 +228,14 @@ class CustomerControllerContractTest {
 
         RestAssuredMockMvc
                 .given()
-                    .accept(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .when()
-                    .get("/api/v1/customers/{customerId}", customer.getId())
+                .get("/api/v1/customers/{customerId}", customer.getId())
                 .then()
-                    .assertThat()
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .statusCode(HttpStatus.OK.value())
-                    .body(
+                .assertThat()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .statusCode(HttpStatus.OK.value())
+                .body(
                         "id", Matchers.equalTo(customer.getId().toString()),
                         "firstName", Matchers.equalTo(customer.getFirstName()),
                         "lastName", Matchers.is(customer.getLastName()),
@@ -254,7 +254,7 @@ class CustomerControllerContractTest {
                         "address.city", Matchers.is(address.getCity()),
                         "address.state", Matchers.is(address.getState()),
                         "address.zipCode", Matchers.is(address.getZipCode())
-                    );
+                );
     }
 
     @Test
@@ -265,11 +265,11 @@ class CustomerControllerContractTest {
                 .thenThrow(CustomerNotFoundException.class);
 
         RestAssuredMockMvc
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON)
-            .when()
+                .when()
                 .get("/api/v1/customers/{customerId}", invalidCustomerId)
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
                 .statusCode(HttpStatus.NOT_FOUND.value())
@@ -309,13 +309,13 @@ class CustomerControllerContractTest {
         """;
 
         RestAssuredMockMvc
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonInput)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
+                .when()
                 .post("/api/v1/customers")
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
                 .statusCode(HttpStatus.CONFLICT.value())
@@ -354,13 +354,13 @@ class CustomerControllerContractTest {
         """;
 
         RestAssuredMockMvc
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonInput)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
+                .when()
                 .post("/api/v1/customers")
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
                 .statusCode(HttpStatus.UNPROCESSABLE_ENTITY.value())
@@ -399,13 +399,13 @@ class CustomerControllerContractTest {
         """;
 
         RestAssuredMockMvc
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonInput)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
+                .when()
                 .post("/api/v1/customers")
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE)
                 .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -449,13 +449,13 @@ class CustomerControllerContractTest {
         """;
 
         RestAssuredMockMvc
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonInput)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
+                .when()
                 .put("/api/v1/customers/{customerId}", customerId)
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .statusCode(HttpStatus.OK.value())
@@ -490,11 +490,11 @@ class CustomerControllerContractTest {
                 .thenReturn(customer);
 
         RestAssuredMockMvc
-            .given()
+                .given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .when()
+                .when()
                 .delete("/api/v1/customers/{customerId}", customerId)
-            .then()
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.NO_CONTENT.value());
     }

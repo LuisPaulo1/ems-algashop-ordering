@@ -43,19 +43,19 @@ public class CustomerControllerIT extends AbstractPresentationIT {
         String json = AlgaShopResourceUtils.readContent("json/create-customer.json");
 
         UUID createdCustomerId = RestAssured
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(json)
-            .when()
+                .when()
                 .post("/api/v1/customers")
-            .then()
+                .then()
                 .assertThat()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .statusCode(HttpStatus.CREATED.value())
                 .body("id", Matchers.not(Matchers.emptyString()))
                 .extract()
-            .jsonPath().getUUID("id");
+                .jsonPath().getUUID("id");
 
         Assertions.assertThat(customerRepository.existsById(createdCustomerId)).isTrue();
     }
@@ -63,11 +63,11 @@ public class CustomerControllerIT extends AbstractPresentationIT {
     @Test
     public void shouldArchiveCustomer() {
         RestAssured
-            .given()
+                .given()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-            .when()
+                .when()
                 .delete("/api/v1/customers/{customerId}", validCustomerId)
-            .then()
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
